@@ -3,7 +3,7 @@
 
 File dataFile;
 
-// JSON Packet Serial Number 
+// JSON Packet Count Number 
 int pack_num = 0;
 
 // JSON Packet Storage Counter
@@ -12,14 +12,11 @@ int pack_count = 0;
 // JSON Packet Storage Limit
 int pack_limit = 30;
 
-// Timer Increment Value
-unsigned long timer_inc = 300000;
-
 // JSON Packet Sending time Counter
-unsigned long timer = 30000;
+unsigned long timer = 30000; // 30 second
 
 // Downtime Value i.e. 33 Seconds
-unsigned long DT = 33000; 
+unsigned long DT = 33000;
 
 // Sensor`s Status Bits ( 0 => ON , 1 => OFF )
 int SS1 = 0;
@@ -114,7 +111,7 @@ void loop() {
         SD.remove("data.txt");
         delay(100);
         pack_count = 0;
-        timer_inc = 300000;     // 5 minutes
+        flag = true;
         delay(100);
         break;
     }
@@ -162,7 +159,7 @@ void loop() {
   // Event trigger instantly if there is a change ..........................................
   if ( PS1 != SS1 )
   { 
-    timer = millis()+timer_inc;
+    timer = millis()+300000UL;
     write_to_sd(); 
     PS1 = SS1;
   }
@@ -170,7 +167,7 @@ void loop() {
   // Event trigger instantly if there is a change ..........................................
   if ( PS3 != SS3 )
   { 
-    timer = millis()+timer_inc;
+    timer = millis()+300000UL;
     write_to_sd();  
     PS3 = SS3;
   }
@@ -178,7 +175,7 @@ void loop() {
   // Event trigger instantly if there is a change ..........................................
   if ( PS5 != SS5 )
   { 
-    timer = millis()+timer_inc;
+    timer = millis()+300000UL;
     write_to_sd(); 
     PS5 = SS5;
   }
@@ -186,7 +183,7 @@ void loop() {
   // JSON Packet Sent after every 5 min ....................................................
   if ( millis() >= timer )
   {                 
-     timer = millis()+timer_inc; 
+     timer = millis()+300000UL; 
      write_to_sd(); 
   }
   
@@ -215,18 +212,16 @@ void write_to_sd(){
 
   String json = "{" + pts + ptc + sr1 + sr2 + sr3 + sr4 + sr5 + sr6 + ss1 + ss3 + ss5 + "}" ;
 
-  /* Set the Time Driven Architecture to 15 minutes */
-  if ( pack_count > 1 ) { timer_inc = 900000; }
+  if ( pack_count > 1 ) { flag = false; }
 
-  /* Clear the file if it reaches maximum data capacity */
   if ( pack_count > pack_limit ){ delay(100); SD.remove("data.txt"); delay(100); pack_count = 0; }
-
+  
   /* Write to SD Card data File */
   dataFile = SD.open("data.txt", FILE_WRITE);
   delay(100);
   if (dataFile) { dataFile.print(json); dataFile.print(","); delay(100); dataFile.close(); delay(100); }
   delay(100);
-  
+
   digitalWrite(Q0_4, HIGH);
   delay(50);
   digitalWrite(Q0_4, LOW);
