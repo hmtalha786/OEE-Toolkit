@@ -1,7 +1,9 @@
 #include <SPI.h>
 #include <SD.h>
+#include <RTClib.h>
 
 File data_file;
+RTC_DS3231 rtc;
 
 /*============================================================================================================================================================================*/
 
@@ -26,7 +28,7 @@ int pack_num = 0;
 int pack_count = 0;
 
 // JSON Packet Storage Limit
-int pack_limit = 30;
+int pack_limit = 25;
 
 /*============================================================================================================================================================================*/
 
@@ -88,7 +90,14 @@ unsigned long count6 = 0;
 /*============================================================================================================================================================================*/
 
 void setup() {
-  Serial.begin(500000);   
+  Serial.begin(500000); 
+
+  if (!rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    Serial.flush();
+    while (1) delay(10);
+  }
+  
   if (SD.begin(53)) { 
     Serial.println("SD Card Connected");
     digitalWrite(Q0_0, HIGH); 
@@ -207,13 +216,15 @@ void Time_And_Event_Driven_Arch() {
 
 void write_to_sd() {
 
+  DateTime now = rtc.now();
   pack_count++;
   pack_num++;
   
   Set_Current_File();
 
+  String uts = "\"UTS\":" + String(now.unixtime()+60UL) + "," ;
   String pts = "\"PTS\":" + String(millis()) + "," ;
-  String ptc = "\"PTC\":" + String(pack_num) + "," ;
+  String pid = "\"PID\":" + String(pack_num) + "," ;
 
   String sr1 = "\"SR1\":" + String(count1) + "," ;
   String sr2 = "\"SR2\":" + String(count2) + "," ;
@@ -226,7 +237,7 @@ void write_to_sd() {
   String ss3 = "\"SS3\":" + String(SS3) + "," ;
   String ss5 = "\"SS5\":" + String(SS5) ;
 
-  json = "{" + pts + ptc + sr1 + sr2 + sr3 + sr4 + sr5 + sr6 + ss1 + ss3 + ss5 + "}" ;
+  json = "{" + uts + pts + pid + sr1 + sr2 + sr3 + sr4 + sr5 + sr6 + ss1 + ss3 + ss5 + "}" ;
 
   Write_to_SD_Card();
 
@@ -253,7 +264,7 @@ void Send_SD_Card_Data() {
     for (int i = 0; i < file_count; i++) { //Serial.print("Sending file "); Serial.println(String(SD_Card_File[i])); 
       data_file = SD.open(SD_Card_File[i]);
       delay(100);
-      if (data_file) { 
+      if (data_file) {
         Serial.print("{\"values\":[");
         for (int n = 0 ; n < (data_file.size()) - 1 ; n++) { Serial.print(char(data_file.read())); }
         Serial.println("]}A");
@@ -261,7 +272,7 @@ void Send_SD_Card_Data() {
         data_file.close();
         delay(100);
       }
-      delay(100);
+      delay(500);
     }
     Serial.println("");
   }
@@ -282,44 +293,25 @@ void clear_SD_Card_Data() {
 /*============================================================================================================================================================================*/
 
 void Set_Current_File() {
-  if ( ( pack_count > 0 ) && ( pack_count < 31 ) ) {
-    File_To_Write = SD_Card_File[0];
-    file_count = 1;
-  }
-  if ( ( pack_count > 30 ) && ( pack_count < 61 ) ) {
-    File_To_Write = SD_Card_File[1];
-    file_count = 2;
-  }
-  if ( ( pack_count > 60 ) && ( pack_count < 91 ) ) {
-    File_To_Write = SD_Card_File[2];
-    file_count = 3;
-  }
-  if ( ( pack_count > 90 ) && ( pack_count < 121 ) ) {
-    File_To_Write = SD_Card_File[3];
-    file_count = 4;
-  }
-  if ( ( pack_count > 120 ) && ( pack_count < 151 ) ) {
-    File_To_Write = SD_Card_File[4];
-    file_count = 5;
-  }
-  if ( ( pack_count > 150 ) && ( pack_count < 181 ) ) {
-    File_To_Write = SD_Card_File[5];
-    file_count = 6;
-  }
-  if ( ( pack_count > 180 ) && ( pack_count < 211 ) ) {
-    File_To_Write = SD_Card_File[6];
-    file_count = 7;
-  }
-  if ( ( pack_count > 210 ) && ( pack_count < 241 ) ) {
-    File_To_Write = SD_Card_File[7];
-    file_count = 8;
-  }
-  if ( ( pack_count > 240 ) && ( pack_count < 271 ) ) {
-    File_To_Write = SD_Card_File[8];
-    file_count = 9;
-  }
-  if ( ( pack_count > 270 ) && ( pack_count < 301 ) ) {
-    File_To_Write = SD_Card_File[9];
-    file_count = 10;
-  }
+  
+  if ( ( pack_count > ( pack_limit * 0 ) ) && ( pack_count < ( ( pack_limit * 1 ) + 1 ) ) ) { File_To_Write = SD_Card_File[0]; file_count = 1; }
+  
+  if ( ( pack_count > ( pack_limit * 1 ) ) && ( pack_count < ( ( pack_limit * 2 ) + 1 ) ) ) { File_To_Write = SD_Card_File[1]; file_count = 2; }
+  
+  if ( ( pack_count > ( pack_limit * 2 ) ) && ( pack_count < ( ( pack_limit * 3 ) + 1 ) ) ) { File_To_Write = SD_Card_File[2]; file_count = 3; }
+  
+  if ( ( pack_count > ( pack_limit * 3 ) ) && ( pack_count < ( ( pack_limit * 4 ) + 1 ) ) ) { File_To_Write = SD_Card_File[3]; file_count = 4; }
+  
+  if ( ( pack_count > ( pack_limit * 4 ) ) && ( pack_count < ( ( pack_limit * 5 ) + 1 ) ) ) { File_To_Write = SD_Card_File[4]; file_count = 5; }
+  
+  if ( ( pack_count > ( pack_limit * 5 ) ) && ( pack_count < ( ( pack_limit * 6 ) + 1 ) ) ) { File_To_Write = SD_Card_File[5]; file_count = 6; }
+  
+  if ( ( pack_count > ( pack_limit * 6 ) ) && ( pack_count < ( ( pack_limit * 7 ) + 1 ) ) ) { File_To_Write = SD_Card_File[6]; file_count = 7; }
+  
+  if ( ( pack_count > ( pack_limit * 7 ) ) && ( pack_count < ( ( pack_limit * 8 ) + 1 ) ) ) { File_To_Write = SD_Card_File[7]; file_count = 8; }
+  
+  if ( ( pack_count > ( pack_limit * 8 ) ) && ( pack_count < ( ( pack_limit * 9 ) + 1 ) ) ) { File_To_Write = SD_Card_File[8]; file_count = 9; }
+  
+  if ( ( pack_count > ( pack_limit * 9 ) ) && ( pack_count < ( ( pack_limit * 10 ) + 1 ) ) ) { File_To_Write = SD_Card_File[9]; file_count = 10; }
+  
 }
