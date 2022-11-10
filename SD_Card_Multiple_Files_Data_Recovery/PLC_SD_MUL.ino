@@ -31,13 +31,13 @@ int pack_limit = 30;
 /*============================================================================================================================================================================*/
 
 // JSON Packet Sending time Counter
-unsigned long timer = 10000; // 30 seconds
+unsigned long timer = 30000; // 30 seconds
 
 // Status Downtime Value for i.e. 33 Seconds
 unsigned long DT = 33000;
 
 // Increment time for each packet i.e. 5 minute
-unsigned long inc_val = 10000; // 30 seconds
+unsigned long inc_val = 30000; // 30 seconds
 
 /*============================================================================================================================================================================*/
 
@@ -94,7 +94,8 @@ void setup() {
     digitalWrite(Q0_0, HIGH); 
     digitalWrite(Q0_1, HIGH); 
     delay(100);
-    for (int i = 0; i < 10; i++) { Serial.print("deleting all SD_Card_File"); Serial.println(SD_Card_File[i]); SD.remove(SD_Card_File[i]); delay(500); }
+    for (int i = 0; i < 10; i++) { //Serial.print("deleting all SD_Card_File"); Serial.println(SD_Card_File[i]); 
+      SD.remove(SD_Card_File[i]); delay(500); }
     delay(100);
   } else { 
     Serial.println("SD Card not Connected");
@@ -249,19 +250,19 @@ void Write_to_SD_Card() {
 void Send_SD_Card_Data() {
   if (SD.begin(53)) {
     delay(100);
-    for (int i = 0; i < 10; i++) { Serial.print("Sending file"); Serial.println(String(SD_Card_File[i])); data_file = SD.open(SD_Card_File[i]);
+    for (int i = 0; i < file_count; i++) { //Serial.print("Sending file "); Serial.println(String(SD_Card_File[i])); 
+      data_file = SD.open(SD_Card_File[i]);
       delay(100);
       if (data_file) { 
         Serial.print("{\"values\":[");
         for (int n = 0 ; n < (data_file.size()) - 1 ; n++) { Serial.print(char(data_file.read())); }
-        Serial.println("]}");
+        Serial.println("]}A");
         delay(100);
         data_file.close();
         delay(100);
       }
-      delay(500);
+      delay(100);
     }
-    delay(100);
     Serial.println("");
   }
 }
@@ -270,7 +271,9 @@ void Send_SD_Card_Data() {
 
 void clear_SD_Card_Data() {
   delay(100);
-  for (int i = 0; i < 10; i++) { Serial.print("Deleting "); Serial.println(SD_Card_File[i]); SD.remove(SD_Card_File[i]); delay(100); }
+  for (int i = 0; i < file_count; i++) { //Serial.print("Deleting "); Serial.println(SD_Card_File[i]); 
+    SD.remove(SD_Card_File[i]); delay(100); 
+  }
   delay(100);
   pack_count = 0;
   delay(100);
@@ -281,35 +284,42 @@ void clear_SD_Card_Data() {
 void Set_Current_File() {
   if ( ( pack_count > 0 ) && ( pack_count < 31 ) ) {
     File_To_Write = SD_Card_File[0];
+    file_count = 1;
   }
   if ( ( pack_count > 30 ) && ( pack_count < 61 ) ) {
     File_To_Write = SD_Card_File[1];
+    file_count = 2;
   }
   if ( ( pack_count > 60 ) && ( pack_count < 91 ) ) {
     File_To_Write = SD_Card_File[2];
+    file_count = 3;
   }
   if ( ( pack_count > 90 ) && ( pack_count < 121 ) ) {
     File_To_Write = SD_Card_File[3];
+    file_count = 4;
   }
   if ( ( pack_count > 120 ) && ( pack_count < 151 ) ) {
     File_To_Write = SD_Card_File[4];
+    file_count = 5;
   }
   if ( ( pack_count > 150 ) && ( pack_count < 181 ) ) {
     File_To_Write = SD_Card_File[5];
+    file_count = 6;
   }
   if ( ( pack_count > 180 ) && ( pack_count < 211 ) ) {
     File_To_Write = SD_Card_File[6];
+    file_count = 7;
   }
   if ( ( pack_count > 210 ) && ( pack_count < 241 ) ) {
     File_To_Write = SD_Card_File[7];
+    file_count = 8;
   }
   if ( ( pack_count > 240 ) && ( pack_count < 271 ) ) {
     File_To_Write = SD_Card_File[8];
+    file_count = 9;
   }
   if ( ( pack_count > 270 ) && ( pack_count < 301 ) ) {
     File_To_Write = SD_Card_File[9];
-  }
-  if ( ( pack_count > 300 ) && ( pack_count < 330 ) ) {
-    File_To_Write = SD_Card_File[10];
+    file_count = 10;
   }
 }
