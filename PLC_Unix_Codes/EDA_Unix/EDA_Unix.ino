@@ -62,7 +62,7 @@ unsigned long count6 = 0;
 /*============================================================================================================================================================================*/
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(500000);
   if (! rtc.begin()) {
     Serial.println("Couldn't find RTC");
     Serial.flush();
@@ -153,7 +153,7 @@ void json_packet_sender(){
   DateTime now = rtc.now();
   pack_num++;
 
-  String uts = "\"UTS\":" + String(now.unixtime()+60UL) + "," ;
+  String uts = "\"UTS\":" + String(now.unixtime()-17940UL) + "," ;    // Coverting to 0 GMT
   String pts = "\"PTS\":" + String(millis()) + "," ;
   String ptc = "\"PTC\":" + String(pack_num) + "," ;
   

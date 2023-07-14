@@ -17,7 +17,7 @@ void setup () {
 }
 
 void loop () {
-  DateTime now = rtc.now();
+  DateTime now = rtc.now()-18000UL;
 
   Serial.print("Unix Time Since Midnight 1/1/1970 = ");
   Serial.print(now.unixtime());
