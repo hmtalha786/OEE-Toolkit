@@ -1,0 +1,1 @@
+https://randomnerdtutorials.com/esp32-save-data-permanently-preferences/
