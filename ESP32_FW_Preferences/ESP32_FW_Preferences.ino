@@ -117,10 +117,10 @@ void setup() {
 
   delay(5000);
 
-  URL = "https://procheck-prod.azure-devices.net/devices/" + DID + "/messages/events?api-version=2020-03-13";
+  URL = "https://Cotbus-prod.azure-devices.net/devices/" + DID + "/messages/events?api-version=2020-03-13";
   Serial.println("HTTP Endpoint : " + URL );
 
-  SAS = "SharedAccessSignature sr=procheck-prod.azure-devices.net%2Fdevices%2F" + DID + "&sig=" + SIG;
+  SAS = "SharedAccessSignature sr=Cotbus-prod.azure-devices.net%2Fdevices%2F" + DID + "&sig=" + SIG;
   Serial.println("Authorization : " + SAS );
 
   /* ----- Turn ON the Hardware Switch for BT & HW Serial ----- */
@@ -296,7 +296,7 @@ void Send_Json_Packet() {
 void Connect_To_WiFi() {
 
   // Define hostname
-  String hostname = "Procheck WiFi Shield";
+  String hostname = "Cotbus WiFi Shield";
   WiFi.setHostname(hostname.c_str());
 
   Serial.println("Connecting to WiFi .......");
@@ -357,7 +357,7 @@ void Connect_To_WiFi() {
 
 void Serial_Input() {
 
-  SerialBT.begin("Procheck WiFi Shield");
+  SerialBT.begin("Cotbus WiFi Shield");
   Serial.println("Credentials Input Channel Activated");
 
   while (true) {
@@ -391,7 +391,7 @@ void Serial_Input() {
 void HTTP_Get_Request_OTA() {
 
   HTTPClient http;
-  String ota_url = "https://procheckprodfunctions.azurewebsites.net/api/deviceInfo?code=FG7C97GGtLao1ulqxCnIsULvjOH71QWQF9_NYRl-yYkYAzFumZfCWw==&lineId=" + DID;
+  String ota_url = "https://Cotbusprodfunctions.azurewebsites.net/api/deviceInfo?code=FG7C97GGtLao1ulqxCnIsULvjOH71QWQF9_NYRl-yYkYAzFumZfCWw==&lineId=" + DID;
   Serial.println("OTA URL : " + ota_url);
   http.begin(ota_url);
 

@@ -6,7 +6,7 @@
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-const char * ssid = "Procheck Team";
+const char * ssid = "Cotbus Team";
 const char * password = "pc@54321";
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -17,8 +17,8 @@ String FirmwareVer = {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-#define URL_fw_Version "https://raw.githubusercontent.com/procheck-hardware/OTA-Update/master/esp32_ota/bin_version.txt"
-#define URL_fw_Bin "https://raw.githubusercontent.com/procheck-hardware/OTA-Update/master/esp32_ota/fw.bin"
+#define URL_fw_Version "https://raw.githubusercontent.com/Cotbus-hardware/OTA-Update/master/esp32_ota/bin_version.txt"
+#define URL_fw_Bin "https://raw.githubusercontent.com/Cotbus-hardware/OTA-Update/master/esp32_ota/fw.bin"
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
